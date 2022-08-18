@@ -17,7 +17,7 @@ this.rotation = 0
     const image = new Image()
     image.src = './imagem/nave.png'
     image.onload = () => {
-        const scale = 0.10
+        const scale = 0.09
         this.image = image
         this.width = image.width * scale
         this.height = image.height * scale
@@ -27,8 +27,6 @@ this.rotation = 0
         }
     }
 }
-
-    
 
    draw(){
     //c.fillStyle = 'red'
@@ -90,7 +88,7 @@ class Projectile {
 }
 
 class Invader {
-    constructor() {
+    constructor({position}) {
         this.velocity = {
             x: 0,
             y: 0
@@ -99,13 +97,13 @@ class Invader {
     const image = new Image()
     image.src = './imagem/invader.png'
     image.onload = () => {
-        const scale = 0.11
+        const scale = 1
         this.image = image
         this.width = image.width * scale
         this.height = image.height * scale
         this.position = {
-            x: canvas.width / 2 - this.width / 2,
-            y: canvas.height / 2
+            x: position.x,
+            y: position.y
         }
     }
 }
@@ -132,9 +130,45 @@ class Invader {
     }
 }
 
+class Grid {
+    constructor() {
+        this.position = {
+            x: 0,
+            y: 0
+        }
+
+        this.velocity = {
+            X: 0,
+            Y: 0
+        }
+
+        this.invaders = []
+
+        const rows = Math.random() * 5
+        for (let x = 0; x < 10; x++) {
+            for (let y = 0; y < 10; y++) {
+            this.invaders.push(
+                new Invader
+                ({position: {
+                x: x * 30,
+                y: y * 30
+                }
+            })
+        )   
+    }
+}
+    console.log(this.invaders)
+}
+
+    update() {
+
+    }
+}
+
 const player = new Player()
 const Projectiles = []
-const invader = new Invader()
+const grids = [new Grid()]
+
 const keys = {
     a: {
         pressed: false
@@ -152,7 +186,6 @@ function animate() {
     requestAnimationFrame(animate)
     c.fillStyle = 'black'
     c.fillRect(0, 0, canvas.width, canvas.height)
-    invader.update()
     player.update()
     Projectiles.forEach((projectile, index) => { 
         if (projectile.position.y + 
@@ -164,6 +197,14 @@ function animate() {
                 projectile.update()
             }
     })
+
+    grids.forEach(grid => {
+        grid.update()
+        grid.invaders.forEach(invader => {
+            invader.update()
+        })
+    })
+
     if (keys.a.pressed && player.position.x >= 0) {
         player.velocity.x= -7
         player.rotation = -0.15
